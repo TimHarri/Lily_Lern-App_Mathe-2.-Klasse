@@ -2,644 +2,211 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<title>🦊 Fuxis Mathe-Abenteuer · 2. Klasse</title>
+<meta name="theme-color" content="#5b3fd6">
+<title>Fuxis Mathe-Abenteuer · 2. Klasse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg1:#7c4dff; --bg2:#448aff; --card:#ffffff;
-    --ok:#2ecc71; --bad:#ff6b6b; --star:#ffd93d;
-    --ink:#2d2a4a;
+    --bg1:#4a2fb8; --bg2:#7a3fd6; --bg3:#2f6fe0;
+    --ink:#241d4f; --ink-soft:#6b64a0;
+    --card:#ffffff; --card-tint:#f4f1ff;
+    --brand:#5b3fd6; --brand-deep:#41279e;
+    --accent:#ff8a3d; --accent-deep:#d96a1a;
+    --ok:#22c55e; --ok-deep:#15803d; --ok-tint:#e8fbef;
+    --bad:#ef4444; --bad-tint:#feecec;
+    --star:#ffcc33; --gold:#f59e0b;
+    --r-lg:28px; --r-md:20px; --r-sm:14px;
+    --chunk:0 6px 0 rgba(0,0,0,.18);
+    --shadow:0 14px 34px rgba(23,10,80,.28);
   }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html,body{ margin:0; padding:0; height:100%; }
+  html,body{ margin:0; padding:0; min-height:100%; }
   body{
-    font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",sans-serif;
-    background:linear-gradient(160deg,var(--bg1),var(--bg2));
+    font-family:"Baloo 2","Segoe UI Rounded","SF Pro Rounded","Comic Sans MS",system-ui,sans-serif;
+    background:linear-gradient(155deg,var(--bg1) 0%,var(--bg2) 45%,var(--bg3) 100%) fixed;
     color:var(--ink);
     overflow-x:hidden;
     touch-action:manipulation;
     user-select:none; -webkit-user-select:none;
+    min-height:100dvh;
   }
-  #app{ max-width:760px; margin:0 auto; padding:16px 14px 40px; min-height:100%; }
+  #bgfx{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  #bgfx span{ position:absolute; border-radius:50%; filter:blur(70px); opacity:.5; animation:drift 16s ease-in-out infinite alternate; }
+  #bgfx span:nth-child(1){ width:44vmax; height:44vmax; background:#8b5cf6; top:-18vmax; left:-14vmax; }
+  #bgfx span:nth-child(2){ width:36vmax; height:36vmax; background:#f59e0b; bottom:-16vmax; right:-12vmax; opacity:.32; animation-delay:-8s; }
+  #bgfx span:nth-child(3){ width:26vmax; height:26vmax; background:#22d3ee; top:36%; right:-14vmax; opacity:.24; animation-delay:-4s; }
+  @keyframes drift{ from{transform:translate(0,0) scale(1)} to{transform:translate(5vmax,3vmax) scale(1.15)} }
+  #fx{ position:fixed; inset:0; z-index:60; pointer-events:none; }
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:.001s !important; transition-duration:.001s !important; } }
 
-  .topbar{
-    display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:14px; gap:10px;
-  }
-  .brand{ color:#fff; font-size:clamp(22px,5vw,32px); font-weight:bold; text-shadow:0 2px 6px rgba(0,0,0,.25); }
-  .brand small{ display:block; font-size:clamp(12px,2.6vw,15px); font-weight:normal; opacity:.9; }
-  .pill{
-    background:rgba(255,255,255,.95); border:none; cursor:pointer;
-    border-radius:999px; padding:10px 16px; font-size:18px; font-weight:bold;
-    font-family:inherit; color:var(--ink); box-shadow:0 4px 10px rgba(0,0,0,.2);
-  }
+  #app{ position:relative; z-index:1; max-width:780px; margin:0 auto; padding:calc(14px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom)); min-height:100dvh; display:flex; flex-direction:column; }
+  .screen{ animation:screenIn .38s cubic-bezier(.2,.9,.3,1.2) both; flex:1; display:flex; flex-direction:column; }
+  @keyframes screenIn{ from{ opacity:0; transform:translateY(22px) scale(.98); } to{ opacity:1; transform:none; } }
 
-  .mascot-row{ display:flex; align-items:center; gap:12px; margin:6px 0 18px; }
-  .mascot{ font-size:56px; line-height:1; animation:bob 2.4s ease-in-out infinite; }
-  @keyframes bob{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .top{ display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+  .brand{ display:flex; align-items:center; gap:10px; margin-right:auto; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.3); }
+  .brand .logo{ font-size:40px; filter:drop-shadow(0 4px 8px rgba(0,0,0,.3)); animation:bob 3s ease-in-out infinite; }
+  .brand h1{ margin:0; font-size:clamp(19px,4.6vw,26px); line-height:1.05; }
+  .brand small{ display:block; font-size:.62em; font-weight:500; opacity:.85; }
+  .chip{
+    display:inline-flex; align-items:center; gap:6px; border:none; cursor:pointer;
+    background:rgba(255,255,255,.94); color:var(--ink); font-family:inherit; font-weight:700;
+    border-radius:999px; padding:9px 14px; font-size:15px;
+    box-shadow:0 4px 12px rgba(23,10,80,.25); transition:transform .12s;
+  }
+  .chip:active{ transform:scale(.92); }
+  .chip.stat{ cursor:default; }
+
+  .levelwrap{ background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.28); border-radius:999px; padding:8px 14px; margin:2px 0 14px; display:flex; align-items:center; gap:12px; backdrop-filter:blur(8px); }
+  .levelbadge{ background:linear-gradient(135deg,var(--star),#f59e0b); color:#4c2d00; font-weight:800; border-radius:999px; padding:4px 12px; font-size:14px; box-shadow:inset 0 -2px 0 rgba(0,0,0,.15); white-space:nowrap; }
+  .xpbar{ flex:1; height:14px; background:rgba(255,255,255,.3); border-radius:999px; overflow:hidden; }
+  .xpfill{ height:100%; border-radius:999px; background:linear-gradient(90deg,#ffd93d,#ff9f1c); box-shadow:inset 0 -3px 4px rgba(0,0,0,.15); transition:width .6s cubic-bezier(.2,.8,.3,1); }
+  .xptext{ color:#fff; font-size:13px; font-weight:700; white-space:nowrap; opacity:.95; }
+
+  .foxrow{ display:flex; align-items:center; gap:12px; margin:8px 0 16px; }
+  .fox{
+    flex:0 0 auto; width:74px; height:74px; border-radius:50%; font-size:44px;
+    display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 30% 25%, rgba(255,255,255,.5), rgba(255,255,255,.12));
+    border:2px solid rgba(255,255,255,.4);
+    box-shadow:0 10px 24px rgba(23,10,80,.35), inset 0 -6px 10px rgba(0,0,0,.1);
+    animation:bob 2.6s ease-in-out infinite;
+  }
+  @keyframes bob{ 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-7px) rotate(2deg)} }
   .bubble{
-    position:relative; background:#fff; border-radius:18px; padding:12px 16px;
-    font-size:17px; box-shadow:0 6px 16px rgba(0,0,0,.18); flex:1;
+    position:relative; background:#fff; border-radius:20px; padding:13px 17px;
+    font-size:17px; line-height:1.35; box-shadow:var(--shadow);
   }
-  .bubble::before{
-    content:""; position:absolute; left:-10px; top:22px;
-    border:10px solid transparent; border-right-color:#fff; border-left:0;
-  }
+  .bubble::before{ content:""; position:absolute; left:-11px; top:24px; border:11px solid transparent; border-right-color:#fff; border-left:0; }
+  .bubble b{ color:var(--brand); }
 
-  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; }
-  .card{
-    background:var(--card); border:none; cursor:pointer; text-align:left;
-    border-radius:24px; padding:18px; font-family:inherit; color:var(--ink);
-    box-shadow:0 8px 18px rgba(0,0,0,.22);
-    transition:transform .12s ease;
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(215px,1fr)); gap:14px; }
+  .mod{
+    position:relative; text-align:left; border:none; cursor:pointer; font-family:inherit; color:var(--ink);
+    background:linear-gradient(140deg,var(--card),var(--card-tint));
+    border-radius:var(--r-lg); padding:18px 16px 15px;
+    box-shadow:var(--shadow), var(--chunk);
+    transition:transform .14s cubic-bezier(.2,.8,.3,1.4);
+    overflow:hidden;
   }
-  .card:active{ transform:scale(.96); }
-  .card .icon{ font-size:44px; }
-  .card h3{ margin:8px 0 4px; font-size:21px; }
-  .card p{ margin:0; font-size:15px; opacity:.75; }
-  .card .stars{ margin-top:8px; font-size:16px; color:#e6a800; }
+  .mod::after{ content:""; position:absolute; inset:0; background:radial-gradient(120px 60px at 85% -10%, rgba(255,255,255,.85), transparent); pointer-events:none; }
+  .mod:active{ transform:translateY(4px) scale(.975); box-shadow:var(--shadow), 0 2px 0 rgba(0,0,0,.18); }
+  .mod .ic{ display:inline-flex; width:58px; height:58px; border-radius:18px; align-items:center; justify-content:center; font-size:32px; margin-bottom:10px; box-shadow:inset 0 -4px 0 rgba(0,0,0,.14), 0 6px 14px rgba(23,10,80,.18); }
+  .mod h3{ margin:0 0 3px; font-size:20px; }
+  .mod p{ margin:0; font-size:14px; color:var(--ink-soft); font-weight:500; }
+  .mod .meter{ margin-top:12px; height:10px; border-radius:999px; background:#e9e5ff; overflow:hidden; }
+  .mod .meter i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#a78bfa,#5b3fd6); }
+  .mod .best{ margin-top:6px; font-size:13px; font-weight:700; color:var(--brand); }
+  .mod .fresh{ position:absolute; top:12px; right:14px; font-size:13px; background:var(--star); color:#5a4300; padding:3px 10px; border-radius:999px; font-weight:800; box-shadow:var(--chunk); }
 
-  .screen-title{
-    color:#fff; font-size:clamp(24px,5.5vw,34px); font-weight:bold;
-    text-shadow:0 2px 6px rgba(0,0,0,.25); margin:4px 0 14px;
-    display:flex; align-items:center; gap:10px;
-  }
+  .hero{ background:var(--card); border-radius:var(--r-lg); box-shadow:var(--shadow), var(--chunk); padding:22px; }
+  .hero h2{ margin:4px 0 4px; font-size:24px; }
+  .hero .sub{ margin:0 0 4px; color:var(--ink-soft); font-weight:600; }
+  .steps{ list-style:none; margin:14px 0 4px; padding:0; }
+  .steps li{ background:var(--card-tint); border-radius:var(--r-sm); padding:13px 15px; margin-bottom:9px; font-size:18px; line-height:1.4; animation:stepIn .3s ease both; }
+  .steps li b{ color:var(--brand); }
+  @keyframes stepIn{ from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none} }
+  .stepdots{ display:flex; gap:6px; justify-content:center; margin:4px 0 2px; }
+  .stepdots i{ width:10px; height:10px; border-radius:50%; background:#ddd6fe; transition:.2s; }
+  .stepdots i.on{ background:var(--brand); transform:scale(1.25); }
+  .stepdots i.done{ background:#c4b5fd; }
 
-  .panel{
-    background:var(--card); border-radius:26px; padding:20px;
-    box-shadow:0 10px 24px rgba(0,0,0,.25);
-  }
-  .panel h2{ margin:0 0 10px; font-size:24px; }
-  .steps{ list-style:none; margin:10px 0; padding:0; }
-  .steps li{
-    background:#f1f0ff; border-radius:14px; padding:12px 14px;
-    margin-bottom:8px; font-size:19px;
-  }
-  .steps li b{ color:#5b3fd6; }
-  .big-q{ font-size:clamp(28px,7vw,40px); font-weight:bold; text-align:center; margin:14px 0; }
-  .visual{ text-align:center; font-size:clamp(20px,5vw,30px); margin:10px 0; line-height:1.6; }
-
+  .btnrow{ display:flex; gap:11px; flex-wrap:wrap; justify-content:center; margin-top:18px; }
   .btn{
-    display:inline-block; border:none; cursor:pointer; font-family:inherit;
-    font-size:20px; font-weight:bold; color:#fff;
-    background:linear-gradient(135deg,#7c4dff,#448aff);
-    border-radius:999px; padding:16px 28px; min-height:64px;
-    box-shadow:0 6px 14px rgba(0,0,0,.25);
-    transition:transform .12s ease;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    border:none; cursor:pointer; font-family:inherit; font-weight:800;
+    font-size:19px; color:#fff; letter-spacing:.3px;
+    background:linear-gradient(160deg,#7c5cff,var(--brand)); border-radius:999px;
+    padding:15px 26px; min-height:64px; min-width:120px;
+    box-shadow:var(--chunk), 0 10px 22px rgba(60,30,160,.35);
+    transition:transform .12s, box-shadow .12s;
+    text-shadow:0 1px 2px rgba(0,0,0,.18);
   }
-  .btn:active{ transform:scale(.95); }
-  .btn.secondary{ background:linear-gradient(135deg,#ffb300,#ff8a00); }
-  .btn.ghost{ background:#eef; color:var(--ink); box-shadow:none; }
-  .btn-row{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:18px; }
-  .btn.wide{ width:100%; }
+  .btn:active{ transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.2), 0 4px 10px rgba(60,30,160,.3); }
+  .btn.orange{ background:linear-gradient(160deg,#ffa14a,var(--accent-deep)); box-shadow:0 6px 0 rgba(150,80,10,.55), 0 10px 22px rgba(220,130,30,.35); }
+  .btn.orange:active{ box-shadow:0 2px 0 rgba(150,80,10,.55); }
+  .btn.ghost{ background:#f0edff; color:var(--brand); box-shadow:0 4px 0 #ddd5f7; text-shadow:none; }
+  .btn.ghost:active{ box-shadow:0 1px 0 #ddd5f7; transform:translateY(3px); }
+  .btn.small{ min-height:52px; padding:10px 20px; font-size:16px; }
+  .btn.back{ background:rgba(255,255,255,.2); box-shadow:none; border:1.5px solid rgba(255,255,255,.45); min-height:52px; padding:10px 18px; font-size:16px; backdrop-filter:blur(6px); }
+  .btn:disabled{ opacity:.45; cursor:default; transform:none !important; }
+
+  .headline{ color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.3); margin:6px 0 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .headline h2{ margin:0; font-size:clamp(22px,5.4vw,30px); }
+  .qbadge{ background:rgba(255,255,255,.2); border:1.5px solid rgba(255,255,255,.4); color:#fff; border-radius:999px; padding:6px 14px; font-size:14px; font-weight:800; backdrop-filter:blur(6px); white-space:nowrap; }
+
+  .track{ height:16px; border-radius:999px; background:rgba(255,255,255,.25); overflow:hidden; margin-bottom:14px; box-shadow:inset 0 2px 5px rgba(0,0,0,.15); }
+  .track i{ display:block; height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg,#ffd93d,#ff9f1c); transition:width .45s cubic-bezier(.2,.8,.3,1); }
+  .qcard{ background:var(--card); border-radius:var(--r-lg); box-shadow:var(--shadow), var(--chunk); padding:20px 18px; text-align:center; position:relative; }
+  .qcard .qtext{ font-size:clamp(19px,4.5vw,24px); font-weight:600; line-height:1.4; }
+  .bigq{ font-size:clamp(34px,9vw,52px); font-weight:800; margin:10px 0; line-height:1.15; letter-spacing:1px; }
+  .bigq .hole{ color:#c4b5fd; }
+  .visual{ font-size:clamp(20px,5vw,30px); margin:8px 0; line-height:1.65; }
+  .streak{ position:absolute; top:-14px; right:-8px; background:linear-gradient(135deg,#ff9f1c,#ff5e3a); color:#fff; font-size:13px; font-weight:800; border-radius:999px; padding:4px 11px; box-shadow:var(--chunk); animation:pop .35s; }
 
   .options{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px; }
   .option{
-    border:4px solid #e5e2ff; background:#fff; cursor:pointer; font-family:inherit;
-    font-size:clamp(24px,6vw,34px); font-weight:bold; color:var(--ink);
-    border-radius:20px; padding:18px 8px; min-height:76px;
-    transition:transform .1s ease;
+    border:3px solid #e8e3ff; background:#fff; cursor:pointer; font-family:inherit; font-weight:800;
+    font-size:clamp(23px,6vw,32px); color:var(--ink);
+    border-radius:var(--r-md); padding:16px 8px; min-height:78px;
+    box-shadow:0 4px 0 #ddd5f7; transition:transform .1s, box-shadow .1s;
   }
-  .option:active{ transform:scale(.95); }
-  .option.correct{ border-color:var(--ok); background:#e8fff1; animation:pop .4s; }
-  .option.wrong{ border-color:var(--bad); background:#ffecec; animation:shake .4s; }
-  @keyframes pop{ 0%{transform:scale(.85)} 60%{transform:scale(1.08)} 100%{transform:scale(1)} }
-  @keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+  .option:active{ transform:translateY(3px); box-shadow:0 1px 0 #ddd5f7; }
+  .option.good{ border-color:var(--ok); background:var(--ok-tint); color:var(--ok-deep); box-shadow:0 4px 0 #b5ecc7; animation:pop .4s; }
+  .option.ohno{ border-color:var(--bad); background:var(--bad-tint); animation:shake .4s; }
+  @keyframes pop{ 0%{transform:scale(.8)} 55%{transform:scale(1.09)} 100%{transform:scale(1)} }
+  @keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-9px)} 75%{transform:translateX(9px)} }
 
-  .numpad{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px; max-width:340px; margin-left:auto; margin-right:auto; }
+  .numdisplay{
+    text-align:center; font-size:clamp(34px,9vw,46px); font-weight:800; min-height:64px;
+    background:var(--card-tint); border-radius:var(--r-sm); padding:8px; letter-spacing:6px; margin-top:12px;
+    border:3px solid #e8e3ff;
+  }
+  .numpad{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:12px auto 0; max-width:340px; }
   .numpad button{
-    border:none; cursor:pointer; font-family:inherit; font-size:28px; font-weight:bold;
-    background:#f1f0ff; color:var(--ink); border-radius:16px; min-height:64px;
+    border:none; cursor:pointer; font-family:inherit; font-size:27px; font-weight:800;
+    background:#f0edff; color:var(--ink); border-radius:var(--r-sm); min-height:62px;
+    box-shadow:0 4px 0 #ddd5f7; transition:transform .08s, box-shadow .08s;
   }
-  .numpad button:active{ background:#ddd8ff; }
-  .numpad .ok{ background:linear-gradient(135deg,#2ecc71,#27ae60); color:#fff; }
-  .display{
-    text-align:center; font-size:40px; font-weight:bold; min-height:56px;
-    background:#f1f0ff; border-radius:16px; padding:8px; letter-spacing:4px;
-  }
+  .numpad button:active{ transform:translateY(3px); box-shadow:0 1px 0 #ddd5f7; }
+  .numpad .okb{ background:linear-gradient(160deg,#34d17b,#16a34a); color:#fff; box-shadow:0 4px 0 #0e7a36; text-shadow:0 1px 2px rgba(0,0,0,.2); font-size:24px; }
+  .numpad .delb{ background:#ffe9d6; color:var(--accent-deep); box-shadow:0 4px 0 #f5cdb0; font-size:22px; }
 
-  .feedback{
-    text-align:center; font-size:24px; font-weight:bold; min-height:36px; margin-top:12px;
-  }
-  .feedback.good{ color:var(--ok); }
-  .feedback.bad{ color:var(--bad); }
+  .feedback{ min-height:56px; margin-top:14px; display:flex; align-items:center; justify-content:center; gap:10px;
+    font-size:19px; font-weight:800; border-radius:var(--r-sm); padding:10px 16px; transition:.25s; }
+  .feedback.hidden{ visibility:hidden; }
+  .feedback.good{ background:var(--ok-tint); color:var(--ok-deep); animation:stepIn .3s; }
+  .feedback.bad{ background:var(--bad-tint); color:#b91c1c; animation:shake .4s; }
+  .feedback.info{ background:#fff7e3; color:#92600a; }
 
-  .progress{ display:flex; gap:6px; justify-content:center; margin:12px 0; flex-wrap:wrap; }
-  .dot{ width:16px; height:16px; border-radius:50%; background:rgba(255,255,255,.5); }
-  .dot.on{ background:var(--star); }
-  .dot.ok{ background:var(--ok); }
-  .dot.no{ background:var(--bad); }
+  .medal{ font-size:96px; text-align:center; animation:pop .5s both; filter:drop-shadow(0 10px 18px rgba(0,0,0,.25)); }
+  .starsline{ font-size:38px; text-align:center; letter-spacing:4px; margin:6px 0; }
+  .starsline span{ display:inline-block; animation:pop .45s both; }
+  .xpplus{ text-align:center; font-size:22px; font-weight:800; color:var(--ok-deep); background:var(--ok-tint); border-radius:999px; padding:8px 18px; display:table; margin:10px auto; }
+  .stat2{ display:flex; gap:12px; justify-content:center; margin:10px 0 2px; flex-wrap:wrap; }
+  .stat2 .chip{ font-size:16px; }
 
-  .svg-clock{ width:min(240px,60vw); height:auto; display:block; margin:6px auto; }
+  .overlay{ position:fixed; inset:0; z-index:70; background:rgba(25,12,70,.66); backdrop-filter:blur(5px);
+    display:flex; align-items:center; justify-content:center; padding:22px; animation:fadeIn .25s; }
+  @keyframes fadeIn{ from{opacity:0} to{opacity:1} }
+  .levelup{ text-align:center; color:#fff; animation:pop .5s; }
+  .levelup .big{ font-size:76px; animation:bob 1.4s ease-in-out infinite; display:block; }
+  .levelup h2{ font-size:clamp(30px,8vw,44px); margin:8px 0; text-shadow:0 3px 10px rgba(0,0,0,.4); }
 
-  .confetti{ position:fixed; top:-20px; font-size:22px; z-index:99; pointer-events:none; animation:fall linear forwards; }
-  @keyframes fall{ to{ transform:translateY(110vh) rotate(720deg); opacity:.9; } }
-
-  .bigstars{ font-size:52px; text-align:center; margin:8px 0; }
-  .medal{ font-size:90px; text-align:center; animation:bob 2s ease-in-out infinite; }
-
-  .hidden{ display:none !important; }
   .center{ text-align:center; }
+  .footnote{ text-align:center; color:rgba(255,255,255,.75); font-size:13px; margin-top:auto; padding-top:18px; font-weight:600; }
 </style>
 </head>
 <body>
-<div id="app"></div>
-
-<script>
-"use strict";
-
-/* ============ Hilfsfunktionen ============ */
-const $ = sel => document.querySelector(sel);
-const app = $("#app");
-const rnd = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
-const pick = arr => arr[rnd(0,arr.length-1)];
-const shuffle = arr => arr.slice().sort(()=>Math.random()-0.5);
-
-function uniqueOptions(correct, candidates, count=4){
-  const opts = [String(correct)];
-  for(const c of shuffle(candidates)){
-    if(opts.length>=count) break;
-    if(!opts.includes(String(c))) opts.push(String(c));
-  }
-  return shuffle(opts);
-}
-
-function save(k,v){ try{ localStorage.setItem("fuxi_"+k, JSON.stringify(v)); }catch(e){} }
-function load(k,d){ try{ const v=localStorage.getItem("fuxi_"+k); return v===null?d:JSON.parse(v); }catch(e){ return d; } }
-
-/* ============ Sound ============ */
-let audioOn = load("sound", true);
-let audioCtx = null;
-function tone(freq, start, dur, type="sine", vol=0.18){
-  if(!audioOn) return;
-  try{
-    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
-    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-    o.type = type; o.frequency.value = freq;
-    g.gain.setValueAtTime(vol, audioCtx.currentTime+start);
-    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+start+dur);
-    o.connect(g); g.connect(audioCtx.destination);
-    o.start(audioCtx.currentTime+start); o.stop(audioCtx.currentTime+start+dur+0.05);
-  }catch(e){}
-}
-const sndCorrect = () => { tone(523,0,.12); tone(659,.1,.12); tone(784,.2,.2); };
-const sndWrong   = () => { tone(220,0,.2,"triangle"); tone(180,.15,.25,"triangle"); };
-const sndStar    = () => { tone(880,0,.1); tone(1175,.1,.25); };
-const sndTap     = () => tone(600,0,.05,"square",0.08);
-
-/* ============ Konfetti ============ */
-const CONF = ["🎉","⭐","✨","🎈","🌟","💜","🧡"];
-function confetti(n=24){
-  for(let i=0;i<n;i++){
-    const el = document.createElement("div");
-    el.className = "confetti";
-    el.textContent = pick(CONF);
-    el.style.left = Math.random()*100+"vw";
-    el.style.animationDuration = (1.6+Math.random()*1.4)+"s";
-    el.style.animationDelay = (Math.random()*0.4)+"s";
-    document.body.appendChild(el);
-    setTimeout(()=>el.remove(), 3600);
-  }
-}
-
-/* ============ Lob & Trost ============ */
-const LOB = ["Super gemacht! 🎉","Klasse! ⭐","Wow, richtig! 🦊","Spitze! 💪","Toll gerechnet! 🌟","Perfekt! 👏"];
-const TROST = ["Fast! Probier es nochmal 💛","Nicht schlimm, nochmal! 🦊","Knapp daneben! Versuch's nochmal ✨","Du schaffst das! Nochmal 💪"];
-
-/* ============ Uhr (SVG) ============ */
-function clockSVG(h, m){
-  let ticks = "";
-  for(let i=0;i<12;i++){
-    const a = i*30*Math.PI/180;
-    const x1 = 100+86*Math.sin(a), y1 = 100-86*Math.cos(a);
-    const x2 = 100+78*Math.sin(a), y2 = 100-78*Math.cos(a);
-    ticks += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#2d2a4a" stroke-width="${i%3===0?5:2.5}" stroke-linecap="round"/>`;
-  }
-  const ha = ((h%12)*30 + m*0.5) * Math.PI/180;
-  const ma = m*6 * Math.PI/180;
-  return `<svg class="svg-clock" viewBox="0 0 200 200">
-    <circle cx="100" cy="100" r="96" fill="#fff" stroke="#7c4dff" stroke-width="8"/>
-    ${ticks}
-    <line x1="100" y1="100" x2="${100+42*Math.sin(ha)}" y2="${100-42*Math.cos(ha)}" stroke="#2d2a4a" stroke-width="8" stroke-linecap="round"/>
-    <line x1="100" y1="100" x2="${100+68*Math.sin(ma)}" y2="${100-68*Math.cos(ma)}" stroke="#ff8a00" stroke-width="5" stroke-linecap="round"/>
-    <circle cx="100" cy="100" r="7" fill="#7c4dff"/>
-  </svg>`;
-}
-function timeLabel(h, m){
-  if(m===0)  return `${h} Uhr`;
-  if(m===30) return `halb ${h+1}`;
-  if(m===15) return `Viertel nach ${h}`;
-  return `Viertel vor ${h+1}`;
-}
-
-/* ============ Formen (SVG) ============ */
-const SHAPES = [
-  {name:"Dreieck", corners:3, svg:`<svg viewBox="0 0 120 120" width="150"><polygon points="60,12 112,106 8,106" fill="#ffd93d" stroke="#e6a800" stroke-width="5" stroke-linejoin="round"/></svg>`},
-  {name:"Quadrat", corners:4, svg:`<svg viewBox="0 0 120 120" width="150"><rect x="14" y="14" width="92" height="92" rx="6" fill="#4ecdc4" stroke="#1a9c94" stroke-width="5"/></svg>`},
-  {name:"Rechteck", corners:4, svg:`<svg viewBox="0 0 160 120" width="170"><rect x="10" y="20" width="140" height="80" rx="6" fill="#ff8a9b" stroke="#d94f63" stroke-width="5"/></svg>`},
-  {name:"Kreis", corners:0, svg:`<svg viewBox="0 0 120 120" width="150"><circle cx="60" cy="60" r="50" fill="#5aa9ff" stroke="#2a6fd6" stroke-width="5"/></svg>`},
-];
-
-/* ============ Module ============ */
-const NAMES = ["Emma","Ben","Lena","Jonas","Mia","Paul"];
-
-const MODULES = [
-  {
-    id:"zahlen", icon:"🔢", title:"Zahlen bis 100",
-    desc:"Nachbarn, vergleichen, ordnen", color:"#7c4dff",
-    examples:[
-      {title:"Nachbarzahlen", steps:["Jede Zahl hat zwei Nachbarn: <b>47</b> → davor <b>46</b>, danach <b>48</b>."]},
-      {title:"Vergleichen", steps:["<b>34 &lt; 43</b> – die Spitze zeigt zur kleineren Zahl.","Merke: <b>&lt;</b> heißt kleiner, <b>&gt;</b> heißt größer, <b>=</b> heißt gleich."]},
-      {title:"10 mehr / 10 weniger", steps:["10 mehr heißt: die Zehner ändern sich. <b>63 + 10 = 73</b>","10 weniger: <b>63 − 10 = 53</b>"]}
-    ],
-    gen(){
-      const kind = rnd(0,3);
-      if(kind===0){
-        const a=rnd(10,98), b=rnd(10,98);
-        const sym = a===b ? "=" : (a>b ? ">" : "<");
-        return {q:`<div class="big-q">${a} &nbsp;⬜&nbsp; ${b}</div><p class="center">Welches Zeichen passt?</p>`,
-          options:uniqueOptions(sym, ["<",">","="],3), answer:String(sym)};
-      }
-      if(kind===1){
-        const n=rnd(11,98);
-        return {q:`<div class="big-q">${n}</div><p class="center">Welche Zahl kommt direkt danach?</p>`,
-          options:uniqueOptions(n+1, [n,n-1,n+2,n+3,n-2],4), answer:String(n+1)};
-      }
-      if(kind===2){
-        const n=rnd(11,89), plus=Math.random()<0.5;
-        const res = plus? n+10 : n-10;
-        return {q:`<p class="center" style="font-size:22px">Rechne im Kopf:</p><div class="big-q">${n} ${plus?"+":"−"} 10 = ?</div>`,
-          answer:String(res), numpad:true};
-      }
-      const n=rnd(11,98);
-      return {q:`<div class="big-q">${n}</div><p class="center">Welche Zahl kommt direkt davor?</p>`,
-        options:uniqueOptions(n-1, [n,n+1,n-2,n+2,n-3],4), answer:String(n-1)};
-    }
-  },
-  {
-    id:"plusminus", icon:"➕", title:"Plus & Minus bis 100",
-    desc:"mit und ohne Zehnerübergang", color:"#2ecc71",
-    examples:[
-      {title:"Plus ohne Übergang", steps:["<b>34 + 25</b>: erst die Zehner: 30 + 20 = <b>50</b>","dann die Einer: 4 + 5 = <b>9</b>","zusammen: <b>59</b>"]},
-      {title:"Plus mit Übergang", steps:["<b>47 + 25</b>: erst 47 + 20 = <b>67</b>","dann 67 + 5 = <b>72</b>"]},
-      {title:"Minus", steps:["<b>52 − 30</b>: nur die Zehner wegnehmen → <b>22</b>","<b>52 − 7</b>: erst bis 45 (− 5), dann noch − 2 → <b>45</b>"]}
-    ],
-    gen(){
-      const minus = Math.random()<0.5;
-      if(minus){
-        const res = rnd(11,89), b = rnd(3,30), a = res+b;
-        return {q:`<div class="big-q">${a} − ${b} = ?</div>`, answer:String(res), numpad:true};
-      }
-      const uebergang = Math.random()<0.5;
-      let a,b;
-      if(uebergang){
-        const e = rnd(2,8);
-        a = 10*rnd(1,8) + e;
-        b = 10 - e + rnd(1,3);
-      } else { a=rnd(11,60); b=rnd(11,39); }
-      return {q:`<div class="big-q">${a} + ${b} = ?</div>`, answer:String(a+b), numpad:true};
-    }
-  },
-  {
-    id:"einmaleins", icon:"✖️", title:"Kleines Einmaleins",
-    desc:"Alle Reihen von 1 bis 10", color:"#ff8a00",
-    examples:[
-      {title:"Was heißt 3 × 4?", steps:["3 × 4 bedeutet: <b>3 mal die 4</b> nehmen.","4 + 4 + 4 = <b>12</b>","💡 Tipp: Reihen tauschen darf man! 3 × 4 = 4 × 3 = 12"]},
-      {title:"Der Trick mit der 10", steps:["<b>7 × 10</b> = 7, 0 hinten dran = <b>70</b>","<b>5 × 5</b> = 25 – die Fünferreihe endet immer auf 5 oder 0!"]}
-    ],
-    gen(){
-      const rows = load("reihen",[2,3,4,5,6,7,8,9,10]);
-      const a = pick(rows), b = rnd(1,10);
-      const res = a*b;
-      return {q:`<div class="big-q">${a} × ${b} = ?</div>`,
-        options:uniqueOptions(res, [res+a,res-b,res+b,res-a,a+b,res+10,Math.abs(res-10)],4), answer:String(res)};
-    }
-  },
-  {
-    id:"zerlegen", icon:"🎲", title:"Zerlegen & Verdoppeln",
-    desc:"Zahlentricks für Profis", color:"#e91e8c",
-    examples:[
-      {title:"Zahlen zerlegen", steps:["<b>8</b> kannst du zerlegen in: 4 + 4, 3 + 5, 2 + 6 …","Gesucht ist die fehlende Zahl: 8 = 3 + <b>5</b>"]},
-      {title:"Verdoppeln & Halbieren", steps:["Verdoppeln heißt: <b>+ dieselbe Zahl</b>. 12 verdoppelt = 24.","Halbieren ist umgekehrt: 24 halbiert = 12."]}
-    ],
-    gen(){
-      const kind = rnd(0,2);
-      if(kind===0){
-        const tot=rnd(6,20), part=rnd(1,tot-1), res=tot-part;
-        return {q:`<div class="big-q">${tot} = ${part} + ?</div><p class="center">Welche Zahl fehlt?</p>`,
-          options:uniqueOptions(res,[res+1,res-1,res+2,tot,part],4), answer:String(res)};
-      }
-      if(kind===1){
-        const n=rnd(3,45), res=n*2;
-        return {q:`<p class="center" style="font-size:22px">Verdopple die Zahl:</p><div class="big-q">2 × ${n} = ?</div>`,
-          answer:String(res), numpad:true};
-      }
-      const n=rnd(2,50), res=n*2;
-      return {q:`<p class="center" style="font-size:22px">Halbiere die Zahl:</p><div class="big-q">${res} : 2 = ?</div>`,
-        answer:String(n), numpad:true};
-    }
-  },
-  {
-    id:"uhr", icon:"⏰", title:"Uhrzeit lesen",
-    desc:"ganze, halbe, viertel Stunden", color:"#00b8d4",
-    examples:[
-      {title:"Ganze Stunde", steps:["Der kurze Zeiger zeigt auf die <b>3</b>, der lange auf die <b>12</b>.","Es ist <b>3 Uhr</b>."]},
-      {title:"Halbe Stunde", steps:["Der lange Zeiger zeigt auf die <b>6</b>.","Der kurze Zeiger steht zwischen 3 und 4 → es ist <b>halb 4</b> (3:30)."]},
-      {title:"Viertel", steps:["Langer Zeiger auf der <b>3</b> → <b>Viertel nach 3</b> (3:15).","Langer Zeiger auf der <b>9</b> → <b>Viertel vor 4</b> (3:45)."]}
-    ],
-    gen(){
-      const h=rnd(1,12), m=pick([0,15,30,45]);
-      const correct = timeLabel(h,m);
-      const wrongs = new Set();
-      while(wrongs.size<3){
-        const h2=rnd(1,12), m2=pick([0,15,30,45]);
-        const l=timeLabel(h2,m2);
-        if(l!==correct && h2!==h) wrongs.add(l);
-      }
-      return {q:`<p class="center" style="font-size:22px">Wie spät ist es?</p>${clockSVG(h,m)}`,
-        options:uniqueOptions(correct,[...wrongs],4), answer:correct};
-    }
-  },
-  {
-    id:"geld", icon:"💰", title:"Euro & Geld",
-    desc:"Einkaufen und Wechselgeld", color:"#ffb300",
-    examples:[
-      {title:"Zusammenzählen", steps:["Ein Heft kostet <b>2 €</b>, ein Stift <b>3 €</b>.","2 € + 3 € = <b>5 €</b>"]},
-      {title:"Wechselgeld", steps:["Du bezahlst mit <b>10 €</b>, es kostet <b>7 €</b>.","10 − 7 = <b>3 €</b> bekommst du zurück."]}
-    ],
-    gen(){
-      const things=[["📕 Buch",3,8],["✏️ Stift",1,3],["🎒 Ranzen",9,15],["🧃 Saft",1,2],["🍪 Keks",1,3],["🧸 Kuscheltier",5,12]];
-if(Math.random()<0.5){
-        const [n1,a]=pick(things), [n2,b]=pick(things);
-        return {q:`<p class="center" style="font-size:20px">${n1} kostet ${a} €,<br>${n2} kostet ${b} €.</p><div class="big-q">Zusammen: ? €</div>`,
-          answer:String(a+b), numpad:true};
-      }
-      const price=rnd(2,9);
-      return {q:`<p class="center" style="font-size:20px">Es kostet ${price} €.<br>Du bezahlst mit 10 €.</p><div class="big-q">Wechselgeld: ? €</div>`,
-        answer:String(10-price), numpad:true};
-    }
-  },
-  {
-    id:"formen", icon:"📐", title:"Formen & Geometrie",
-    desc:"Figuren erkennen und zählen", color:"#8bc34a",
-    examples:[
-      {title:"Die Formen", steps:["<b>Dreieck</b>: 3 Ecken, 3 Seiten","<b>Quadrat</b>: 4 gleiche Seiten · <b>Rechteck</b>: 4 Ecken, 2 lange + 2 kurze Seiten","<b>Kreis</b>: gar keine Ecken!"]}
-    ],
-    gen(){
-      const s = pick(SHAPES);
-      if(Math.random()<0.5){
-        return {q:`<p class="center" style="font-size:22px">Wie heißt diese Form?</p><div class="visual">${s.svg}</div>`,
-          options:uniqueOptions(s.name, SHAPES.map(x=>x.name),4), answer:s.name};
-      }
-      return {q:`<p class="center" style="font-size:22px">Wie viele <b>Ecken</b> hat diese Form?</p><div class="visual">${s.svg}</div>`,
-        options:uniqueOptions(s.corners,[0,1,2,3,4,5,6],4), answer:String(s.corners)};
-    }
-  },
-  {
-    id:"text", icon:"📖", title:"Sachaufgaben",
-    desc:"Geschichten zum Mitrechnen", color:"#7955ff",
-    examples:[
-      {title:"So gehst du vor", steps:["1. <b>Lesen</b>: Was ist gefragt?","2. <b>Rechnen</b>: Welche Zahlen brauche ich?","3. <b>Antworten</b>: „Emma hat jetzt 12 Murmeln.“","Beispiel: 8 Murmeln + 4 gefundene = <b>12 Murmeln</b>"]}
-    ],
-    gen(){
-      const name = pick(NAMES);
-      const kind = rnd(0,3);
-      if(kind===0){
-        const a=rnd(5,40), b=rnd(3,25);
-        return {q:`<div class="visual">🍬 ${name} hat ${a} Bonbons.<br>Zum Geburtstag bekommt sie ${b} dazu.</div><div class="big-q">Wie viele jetzt?</div>`,
-          answer:String(a+b), numpad:true};
-      }
-      if(kind===1){
-        const a=rnd(20,60), b=rnd(3,15);
-        return {q:`<div class="visual">🧦 In der Wäsche sind ${a} Socken.<br>${b} Socken werden verloren gegessen von der Waschmaschine… äh, verschwinden.</div><div class="big-q">Wie viele bleiben?</div>`,
-          answer:String(a-b), numpad:true};
-      }
-      if(kind===2){
-        const a=rnd(2,6), b=rnd(2,9);
-        return {q:`<div class="visual">📦 Es gibt ${a} Kartons.<br>In jedem Karton sind ${b} Äpfel.</div><div class="big-q">Wie viele Äpfel insgesamt?</div>`,
-          answer:String(a*b), numpad:true};
-      }
-      const t=pick([10,20,50]), p=rnd(2,t-2);
-      return {q:`<div class="visual">💵 ${name} hat ${t} € gespart.<br>Er kauft ein Spiel für ${p} €.</div><div class="big-q">Wie viel € bleibt übrig?</div>`,
-        answer:String(t-p), numpad:true};
-    }
-  }
-];
-
-/* ============ Zustand ============ */
-let state = { mod:null, phase:"home", exIdx:0, exList:[], score:0, wrong:0, input:"", locked:false };
-
-function totalStars(){ return load("stars",0); }
-function moduleStars(id){ return load("best_"+id,0); }
-
-/* ============ Rendern: Startseite ============ */
-function renderHome(){
-  state.phase = "home";
-  const cards = MODULES.map((m,i)=>`
-    <button class="card" data-mod="${i}">
-      <div class="icon">${m.icon}</div>
-      <h3>${m.title}</h3>
-      <p>${m.desc}</p>
-      <div class="stars">${"⭐".repeat(Math.min(moduleStars(m.id),5))||"✨ neu!"}</div>
-    </button>`).join("");
-  app.innerHTML = `
-    <div class="topbar">
-      <div class="brand">🦊 Fuxis Mathe-Abenteuer<small>2. Klasse · Baden-Württemberg</small></div>
-      <button class="pill" id="soundBtn">${audioOn?"🔊":"🔇"}</button>
-    </div>
-    <div class="mascot-row">
-      <div class="mascot">🦊</div>
-      <div class="bubble">Hallo! Ich bin <b>Fuxi</b>! Wähle ein Modul – vorher zeige ich dir immer ein <b>Beispiel</b>. Du hast schon <b>${totalStars()} ⭐</b> gesammelt!</div>
-    </div>
-    <div class="grid">${cards}</div>`;
-  $("#soundBtn").onclick = ()=>{ audioOn=!audioOn; save("sound",audioOn); renderHome(); };
-  document.querySelectorAll("[data-mod]").forEach(btn=>{
-    btn.onclick = ()=>{ sndTap(); openModule(+btn.dataset.mod); };
-  });
-}
-
-/* ============ Modul öffnen → Beispiele ============ */
-function openModule(i){
-  const m = MODULES[i];
-  state.mod = i;
-  state.phase = "examples";
-  state.exIdx = 0;
-  state.score = 0;
-  state.input = "";
-  const ex = m.examples[state.exIdx];
-  app.innerHTML = `
-    <div class="screen-title">${m.icon} ${m.title}</div>
-    <div class="panel">
-      <h2>💡 Beispiel ${state.exIdx+1} von ${m.examples.length}: ${ex.title}</h2>
-      <ul class="steps">${ex.steps.map(s=>`<li>${s}</li>`).join("")}</ul>
-      <div class="btn-row">
-        ${state.exIdx < m.examples.length-1
-          ? `<button class="btn" id="nextEx">Weiteres Beispiel ▶</button>`
-          : `<button class="btn" id="startEx">Verstanden – los geht's! 🚀</button>`}
-        <button class="btn ghost" id="backBtn">⬅ Zurück</button>
-      </div>
-    </div>`;
-  const nb = $("#nextEx"); if(nb) nb.onclick = ()=>{ sndTap(); state.exIdx++; openModule(i); };
-  const sb = $("#startEx"); if(sb) sb.onclick = ()=>{ sndTap(); startExercises(); };
-  $("#backBtn").onclick = ()=>{ sndTap(); renderHome(); };
-}
-
-/* ============ Übungen ============ */
-const EX_COUNT = 10;
-
-function startExercises(){
-  state.phase = "exercise";
-  state.exIdx = 0;
-  state.score = 0;
-  state.exList = [];
-  for(let i=0;i<EX_COUNT;i++) state.exList.push(MODULES[state.mod].gen());
-  renderExercise();
-}
-
-function dots(){
-  let d="";
-  for(let i=0;i<EX_COUNT;i++){
-    let cls="dot";
-    if(i<state.exIdx) cls += state.exList[i].result==="ok"?" ok":" no";
-    else if(i===state.exIdx) cls += " on";
-    d += `<div class="${cls}"></div>`;
-  }
-  return `<div class="progress">${d}</div>`;
-}
-
-function renderExercise(){
-  const m = MODULES[state.mod];
-  if(state.exIdx >= EX_COUNT){ renderEnd(); return; }
-  const ex = state.exList[state.exIdx];
-  state.locked = false;
-  state.input = "";
-  let body = "";
-  if(ex.options){
-    body = `<div class="options">${ex.options.map((o,k)=>`<button class="option" data-opt="${k}">${o}</button>`).join("")}</div>`;
-  } else {
-    body = `
-      <div class="display" id="disp">&nbsp;</div>
-      <div class="numpad">
-        ${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-num="${n}">${n}</button>`).join("")}
-        <button data-num="0">0</button>
-        <button data-num="del">⌫</button>
-        <button class="ok" id="checkBtn">✓</button>
-      </div>`;
-  }
-  app.innerHTML = `
-    <div class="screen-title">${m.icon} ${m.title}</div>
-    ${dots()}
-    <div class="panel">
-      ${ex.q}
-      ${body}
-      <div class="feedback" id="fb"></div>
-      <div class="btn-row">
-        <button class="btn ghost" id="helpBtn">💡 Beispiel nochmal ansehen</button>
-        <button class="btn ghost" id="quitBtn">⬅ Menü</button>
-      </div>
-    </div>`;
-  if(ex.options){
-    document.querySelectorAll("[data-opt]").forEach(btn=>{
-      btn.onclick = ()=> answer(btn, ex.options[+btn.dataset.opt]);
-    });
-  } else {
-    document.querySelectorAll("[data-num]").forEach(btn=>{
-      btn.onclick = ()=>{
-        if(state.locked) return;
-        sndTap();
-        if(btn.dataset.num==="del") state.input = state.input.slice(0,-1);
-        else if(state.input.length<4) state.input += btn.dataset.num;
-        $("#disp").textContent = state.input || "\u00a0";
-      };
-    });
-    $("#checkBtn").onclick = ()=>{
-      if(!state.locked && state.input!=="") answer($("#checkBtn"), state.input);
-    };
-  }
-  $("#helpBtn").onclick = ()=>{ sndTap(); showExampleOverlay(); };
-  $("#quitBtn").onclick = ()=>{ sndTap(); renderHome(); };
-}
-
-function answer(btn, val){
-  if(state.locked) return;
-  state.locked = true;
-  const ex = state.exList[state.exIdx];
-  const fb = $("#fb");
-  if(String(val) === String(ex.answer)){
-    ex.result = "ok";
-    state.score++;
-    btn && btn.classList.add("correct");
-    fb.textContent = pick(LOB);
-    fb.className = "feedback good";
-    sndCorrect(); confetti(18);
-    setTimeout(nextStep, 1100);
-  } else {
-    ex.result = "no";
-    btn && btn.classList.add("wrong");
-    fb.textContent = pick(TROST);
-    fb.className = "feedback bad";
-    sndWrong();
-    setTimeout(nextStep, 1300);
-  }
-}
-
-function nextStep(){
-  if(state.phase !== "exercise") return;
-  state.exIdx++;
-  if(state.exIdx >= EX_COUNT) renderEnd();
-  else renderExercise();
-}
-
-/* ============ Beispiel-Overlay während der Übung ============ */
-function showExampleOverlay(){
-  const m = MODULES[state.mod];
-  const ex = m.examples[0];
-  const ov = document.createElement("div");
-  ov.style.cssText = "position:fixed;inset:0;background:rgba(30,20,80,.7);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50;";
-  ov.innerHTML = `
-    <div class="panel" style="max-width:480px;max-height:80vh;overflow:auto">
-      <h2>💡 ${ex.title}</h2>
-      <ul class="steps">${ex.steps.map(s=>`<li>${s}</li>`).join("")}</ul>
-      <div class="btn-row"><button class="btn" id="ovClose">Weiter üben ▶</button></div>
-    </div>`;
-  document.body.appendChild(ov);
-  ov.querySelector("#ovClose").onclick = ()=> ov.remove();
-  ov.onclick = e => { if(e.target===ov) ov.remove(); };
-}
-
-/* ============ Abschluss ============ */
-function renderEnd(){
-  state.phase = "end";
-  const m = MODULES[state.mod];
-  const stars = state.score;
-  const best = Math.max(stars, moduleStars(m.id));
-  save("best_"+m.id, best);
-  save("stars", totalStars() + stars);
-  const medal = stars>=9 ? "🏆" : stars>=7 ? "🥇" : stars>=5 ? "🥈" : "🦊";
-  const msg = stars>=9 ? "Fantastisch! Du bist ein Mathe-Fuchs!" : stars>=7 ? "Sehr gut gemacht!" : stars>=5 ? "Gut gemacht – weiter so!" : "Übung macht den Meister! Probier es nochmal.";
-  app.innerHTML = `
-    <div class="screen-title">${m.icon} ${m.title}</div>
-    <div class="panel center">
-      <div class="medal">${medal}</div>
-      <h2>${msg}</h2>
-      <div class="bigstars">${"⭐".repeat(stars)}${"☆".repeat(EX_COUNT-stars)}</div>
-      <p>Du hast <b>${stars} von ${EX_COUNT}</b> Aufgaben richtig gelöst.</p>
-      <p>Gesamt: <b>${totalStars()} ⭐</b> gesammelt!</p>
-      <div class="btn-row">
-        <button class="btn" id="againBtn">🔁 Nochmal üben</button>
-        <button class="btn secondary" id="homeBtn">🏠 Zum Menü</button>
-      </div>
-    </div>`;
-  sndStar(); confetti(40);
-  $("#againBtn").onclick = ()=>{ sndTap(); startExercises(); };
-  $("#homeBtn").onclick = ()=>{ sndTap(); renderHome(); };
-}
-
-/* ============ Start ============ */
-renderHome();
-document.addEventListener("dblclick", e=>e.preventDefault(), {passive:false});
-</script>
+<div id="bgfx"><span></span><span></span><span></span></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div id="app" role="main"></div>
+<script src="fuxi-core.js"></script>
+<script src="fuxi-ui.js"></script>
 </body>
 </html>
